@@ -108,7 +108,8 @@ export default {
         };
     },
     async mounted() {
-        const token = JSON.parse(localStorage.getItem("token"));
+        const token = localStorage.getItem("token");
+        console.log(token);
         this.user = JSON.parse(localStorage.getItem("user"));
         if (!token) {
             this.$router.push({ name: "page-not-found" });
@@ -120,17 +121,19 @@ export default {
     methods: {
         async reloadData() {
             this.showTable = false;
+            const token = localStorage.getItem("token");
             let response = {};
             if (this.toggleTable) {
-                response = await axios.get("/api/userall");
+                response = await axios.get("/api/userall", { headers: { Authorization: "Bearer " + token } });
             } else {
-                response = await axios.get("/api/todo" + "/" + this.user.id);
+                response = await axios.get("/api/todo" + "/" + this.user.id, { headers: { Authorization: "Bearer " + token } });
             }
             this.items = response.data;
             console.log("this.items", this.items);
             this.showTable = true;
         },
         async createToDoItem() {
+            const token = localStorage.getItem("token");
             const { valid } = await this.$refs.myForm.validate();
             if (!valid) {
                 this.snackbarText = "Description is required";
@@ -140,9 +143,13 @@ export default {
             }
 
             await axios
-                .post("/api/todo/" + this.user.id, {
-                    description: this.description,
-                })
+                .post(
+                    "/api/todo/" + this.user.id,
+                    {
+                        description: this.description,
+                    },
+                    { headers: { Authorization: "Bearer " + token } }
+                )
                 .then(async (response) => {
                     await this.reloadData();
                     this.snackbarText = "Item created successfully";

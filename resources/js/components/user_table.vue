@@ -38,27 +38,26 @@ export default {
     },
     methods: {
         async updateUserStatusItem(item) {
-            console.log(item);
-            let response = await axios.put("/api/userUpdate/" + item.id, {
-                role: item.usertype.toLowerCase() === "admin" ? "user" : "admin",
-            });
+            const token = localStorage.getItem("token");
+
+            let response = await axios.put(
+                "/api/userUpdate/" + item.id,
+                {
+                    role: item.usertype.toLowerCase() === "admin" ? "user" : "admin",
+                },
+                { headers: { Authorization: "Bearer " + token } }
+            );
             this.$emit("reloadData");
         },
 
         async trashToDoItem(item) {
-            let response = await axios.delete("/api/userDelete/" + item.id);
+            const token = localStorage.getItem("token");
+            let response = await axios.delete("/api/userDelete/" + item.id, { headers: { Authorization: "Bearer " + token } });
             this.$emit("reloadData");
         },
     },
     computed: {
         formatData() {
-            console.log(
-                "this.data",
-                this.data.map((e) => {
-                    console.log(e.user_details);
-                    return { ...e, fullname: e.user_details.firstname + " " + e.user_details.lastname };
-                })
-            );
             return this.data.map((e) => {
                 console.log(e.user_details);
                 return { ...e, fullname: e.user_details.firstname + " " + e.user_details.lastname };

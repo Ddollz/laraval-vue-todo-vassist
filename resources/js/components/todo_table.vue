@@ -29,19 +29,26 @@ export default {
             service_general: general,
         };
     },
-    async mounted() {
-    },
+    async mounted() {},
     methods: {
         async updateToDoItem(item, bool) {
+            const token = localStorage.getItem("token");
+
             console.log(item);
-            let response = await axios.put("/api/todoUpdate/" + item.id, {
-                status: bool ? "completed" : "pending",
-            });
+            let response = await axios.put(
+                "/api/todoUpdate/" + item.id,
+                {
+                    status: bool ? "completed" : "pending",
+                },
+                { headers: { Authorization: "Bearer " + token } }
+            );
             this.$emit("reloadData");
         },
 
         async trashToDoItem(item) {
-            let response = await axios.delete("/api/todoDelete/" + item.id);
+            const token = localStorage.getItem("token");
+
+            let response = await axios.delete("/api/todoDelete/" + item.id, { headers: { Authorization: "Bearer " + token } });
             this.$emit("reloadData");
         },
     },

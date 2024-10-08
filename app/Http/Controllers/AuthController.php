@@ -18,9 +18,10 @@ class AuthController extends Controller
             'username' => 'required|string',
             'password' => 'required|string'
         ]);
-        $token = Auth::attempt($fields);
-        if ($token) {
+        $login = Auth::attempt($fields);
+        if ($login) {
             $user = Auth::user();
+            $token = $request->user()->createToken($request->username)->plainTextToken;
             return response()->json([
                 'status' => 'success',
                 'user' => $user,

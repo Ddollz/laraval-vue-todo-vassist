@@ -37,6 +37,7 @@ export default {
             let response = await axios.post("/api/login", { username: this.username, password: this.password });
             if (response.data.status == "success") {
                 const token = response.data.authorisation.token;
+                console.log(token)
                 localStorage.setItem("token", token);
                 localStorage.setItem("user", JSON.stringify(response.data.user));
                 const user = JSON.parse(localStorage.getItem('user'));
